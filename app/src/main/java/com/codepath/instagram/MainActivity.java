@@ -13,6 +13,7 @@ import com.parse.ParseUser;
 public class MainActivity extends AppCompatActivity {
 
     public final int REQUEST_CODE = 20;
+    public static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
             finish();
+            return true;
+        }
+        else if (item.getItemId() == R.id.imPost) {
+            // Logout is tapped, logout user and send back to login screen
+            Intent i = new Intent(this, PostActivity.class);
+            startActivity(i);
             return true;
         }
         return super.onOptionsItemSelected(item);

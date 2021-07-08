@@ -63,12 +63,12 @@ public class LoginActivity extends AppCompatActivity {
             public void done(ParseUser user, ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Issue with login", e);
-                    Toast.makeText(LoginActivity.this, "Issue with login!", Toast.LENGTH_SHORT);
+                    Toast.makeText(LoginActivity.this, "Issue with login!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 //Once logged in, navigate to Main Activity
                 goMainActivity();
-                Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT);
+                Toast.makeText(LoginActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -81,9 +81,9 @@ public class LoginActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 if (e == null) {
                     loginUser(username, password);
-                    Toast.makeText(LoginActivity.this, "Signed Up!", Toast.LENGTH_SHORT);
+                    Toast.makeText(LoginActivity.this, "Signed Up!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(LoginActivity.this, "Issue with signing up!", Toast.LENGTH_SHORT);
+                    Toast.makeText(LoginActivity.this, "Issue with signing up!", Toast.LENGTH_SHORT).show();
                 }
             }
         });

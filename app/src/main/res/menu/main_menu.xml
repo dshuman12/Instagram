@@ -1,6 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/imPost"
+        android:icon="@drawable/instagram_new_post_outline_24"
+        android:title="Logout"
+        app:showAsAction="ifRoom|withText"></item>
+    <item
         android:id="@+id/imLogout"
         android:title="Logout"
         app:showAsAction="ifRoom|withText"></item>
