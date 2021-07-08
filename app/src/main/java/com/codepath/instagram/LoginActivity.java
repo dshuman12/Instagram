@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e != null) {
+                    //TODO: Better error handling
                     Log.e(TAG, "Issue with login", e);
                     Toast.makeText(LoginActivity.this, "Issue with login!", Toast.LENGTH_SHORT).show();
                     return;
@@ -80,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
+                    //TODO: Better error handling
                     loginUser(username, password);
                     Toast.makeText(LoginActivity.this, "Signed Up!", Toast.LENGTH_SHORT).show();
                 } else {

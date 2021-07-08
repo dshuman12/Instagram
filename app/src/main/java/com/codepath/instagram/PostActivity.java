@@ -93,6 +93,7 @@ public class PostActivity extends AppCompatActivity {
                 mIvPostImage.setImageResource(0);
             }
         });
+        finish();
     }
 
     private void queryPosts() {
