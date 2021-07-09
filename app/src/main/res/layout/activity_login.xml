@@ -7,7 +7,9 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputUsername"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivInstagram"
+        android:layout_margin="5dp">
 
         <EditText
             android:id="@+id/etUsername"
@@ -15,16 +17,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="@string/username"
-            app:hintEnabled="true"
-            android:inputType="text" />
-
+            android:inputType="text"
+            app:hintEnabled="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textInputUsername">
+        android:layout_below="@id/textInputUsername"
+        android:layout_margin="5dp">
 
         <EditText
             android:id="@+id/etPassword"
@@ -34,16 +36,6 @@
             android:hint="@string/password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textInputPassword"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:text="@string/login" />
 
     <ImageView
         android:id="@+id/ivLogo"
@@ -55,11 +47,43 @@
 
     <Button
         android:id="@+id/btnSignup"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnLogin"
+        android:layout_below="@id/ptOr"
         android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
         android:layout_marginTop="10dp"
         android:text="SignUp" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textInputPassword"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/login" />
+
+    <ImageView
+        android:id="@+id/ivInstagram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/nav_logo_whiteout" />
+
+    <EditText
+        android:id="@+id/ptOr"
+        android:layout_width="34dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnLogin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="OR" />
 
 </RelativeLayout>
