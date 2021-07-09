@@ -24,11 +24,16 @@ public class MainActivity extends AppCompatActivity {
 
     public final int REQUEST_CODE = 20;
     public static final String TAG = "MainActivity";
+    public static final int LOAD_LIMIT = 20;
     private SwipeRefreshLayout swipeContainer;
 
     private RecyclerView mRvPosts;
     protected PostsAdapter mAdapter;
     protected List<Post> mAllPosts;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
+
+    private int mCurrentPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                queryPosts();
+                mCurrentPosition = 0;
+                queryPosts(mCurrentPosition);
             }
         });
         // Configure the refreshing colors
@@ -53,6 +59,19 @@ public class MainActivity extends AppCompatActivity {
                 android.R.color.holo_red_light);
 
         mRvPosts = findViewById(R.id.rvPosts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRvPosts.setLayoutManager(linearLayoutManager);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi();
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        mRvPosts.addOnScrollListener(scrollListener);
 
         // Initialize the posts into the PostsAdapter
         mAllPosts = new ArrayList<>();
@@ -61,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
         // set the adapter on the recycler view
         mRvPosts.setAdapter(mAdapter);
         mRvPosts.setLayoutManager(new LinearLayoutManager(this));
-        queryPosts();
+        mCurrentPosition = 0;
+        queryPosts(mCurrentPosition);
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -91,12 +111,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void queryPosts() {
+    private void queryPosts(int requestedStartPosition) {
         // specify what type of data we want to query - Post.class
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         // include data referred by user key
         query.include(Post.KEY_USER);
-        query.setLimit(20);
+        mCurrentPosition += LOAD_LIMIT;
+        query.setLimit(LOAD_LIMIT);
+        // starts reading posts after the position
+        query.setSkip(requestedStartPosition);
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         // start an asynchronous call for posts
@@ -120,5 +143,10 @@ public class MainActivity extends AppCompatActivity {
                 swipeContainer.setRefreshing(false);
             }
         });
+    }
+
+    public void loadNextDataFromApi() {
+        queryPosts(mCurrentPosition);
+        mAdapter.notifyItemRangeInserted(mCurrentPosition, LOAD_LIMIT);
     }
 }
