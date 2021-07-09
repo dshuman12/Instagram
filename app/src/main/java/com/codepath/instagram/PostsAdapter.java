@@ -48,6 +48,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private ImageView ivImage;
         private TextView tvDescription;
         private TextView tvTimestamp;
+        private ImageView ivProfilePic;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +56,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             ivImage = itemView.findViewById(R.id.ivImage);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
+            ivProfilePic = itemView.findViewById(R.id.ivProfilePhoto);
 
             tvTimestamp.setVisibility(View.GONE);
             tvDescription.setVisibility(View.GONE);
@@ -65,10 +67,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         public void bind(Post post) {
             // Bind the post data to the view elements
             tvDescription.setText(post.getDescription());
-            tvUsername.setText(post.getUser().getUsername());
+            tvUsername.setText(post.getUser().getString("name"));
             ParseFile image = post.getImage();
             if (image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);
+            }
+            ParseFile profilePic = post.getUser().getParseFile("profilePicture");
+            if (profilePic != null) {
+                Glide.with(context).load(profilePic.getUrl()).into(ivProfilePic);
             }
             tvTimestamp.setText(Post.calculateTimeAgo(post.getCreatedAt()));
         }

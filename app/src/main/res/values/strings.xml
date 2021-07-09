@@ -6,4 +6,7 @@
     <string name="description">Description...</string>
     <string name="take_picture">Take Picture</string>
     <string name="submit">Submit</string>
+    <string name="text_music">Profile</string>
+    <string name="text_schedules">Post</string>
+    <string name="text_favorites">Home</string>
 </resources>

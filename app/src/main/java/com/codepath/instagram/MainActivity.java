@@ -2,38 +2,24 @@ package com.codepath.instagram;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
+import com.codepath.instagram.fragments.HomeFragment;
+import com.codepath.instagram.fragments.ProfileFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public final int REQUEST_CODE = 20;
-    public static final String TAG = "MainActivity";
-    public static final int LOAD_LIMIT = 20;
-    private SwipeRefreshLayout swipeContainer;
-
-    private RecyclerView mRvPosts;
-    protected PostsAdapter mAdapter;
-    protected List<Post> mAllPosts;
-
-    private EndlessRecyclerViewScrollListener scrollListener;
-
-    private int mCurrentPosition = 0;
+    final FragmentManager mFragmentManager = getSupportFragmentManager();
+    private BottomNavigationView mBottomNavView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,45 +29,28 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mCurrentPosition = 0;
-                queryPosts(mCurrentPosition);
-            }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        mBottomNavView = findViewById(R.id.bottom_navigation);
 
-        mRvPosts = findViewById(R.id.rvPosts);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mRvPosts.setLayoutManager(linearLayoutManager);
-
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi();
-            }
-        };
-        // Adds the scroll listener to RecyclerView
-        mRvPosts.addOnScrollListener(scrollListener);
-
-        // Initialize the posts into the PostsAdapter
-        mAllPosts = new ArrayList<>();
-        mAdapter = new PostsAdapter(this, mAllPosts);
-
-        // set the adapter on the recycler view
-        mRvPosts.setAdapter(mAdapter);
-        mRvPosts.setLayoutManager(new LinearLayoutManager(this));
-        mCurrentPosition = 0;
-        queryPosts(mCurrentPosition);
+        mBottomNavView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        Fragment fragment;
+                        switch (item.getItemId()) {
+                            case R.id.action_home:
+                                fragment = new HomeFragment();
+                                break;
+                            case R.id.action_profile:
+                            default:
+                                fragment = new ProfileFragment();
+                                break;
+                        }
+                        mFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                        return true;
+                    }
+                });
+        // Set default selection
+        mBottomNavView.setSelectedItemId(R.id.action_home);
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -109,44 +78,5 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void queryPosts(int requestedStartPosition) {
-        // specify what type of data we want to query - Post.class
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        // include data referred by user key
-        query.include(Post.KEY_USER);
-        mCurrentPosition += LOAD_LIMIT;
-        query.setLimit(LOAD_LIMIT);
-        // starts reading posts after the position
-        query.setSkip(requestedStartPosition);
-        // order posts by creation date (newest first)
-        query.addDescendingOrder("createdAt");
-        // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
-                }
-                mAdapter.clear();
-                // for debugging purposes let's print every post description to logcat
-                for (Post post : posts) {
-                    Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
-                }
-
-                // save received posts to list and notify adapter of new data
-                mAllPosts.addAll(posts);
-                mAdapter.notifyDataSetChanged();
-                swipeContainer.setRefreshing(false);
-            }
-        });
-    }
-
-    public void loadNextDataFromApi() {
-        queryPosts(mCurrentPosition);
-        mAdapter.notifyItemRangeInserted(mCurrentPosition, LOAD_LIMIT);
     }
 }
